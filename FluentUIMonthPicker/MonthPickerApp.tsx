@@ -1,4 +1,4 @@
-import { Button, FluentProvider, Input, Popover, PopoverSurface, PopoverTrigger, useId, webLightTheme, Text, makeStyles, shorthands, PositioningImperativeRef, IdPrefixProvider } from '@fluentui/react-components'
+import { FluentProvider, Input, Popover, PopoverSurface, PopoverTrigger, webLightTheme,  makeStyles, shorthands, PositioningImperativeRef, IdPrefixProvider } from '@fluentui/react-components'
 import { CalendarMonth20Regular  } from "@fluentui/react-icons";
 import { Calendar, DateRangeType  } from "@fluentui/react-calendar-compat";
 import * as React from 'react';
@@ -15,6 +15,7 @@ export const useStyles = makeStyles({
 })
 
 export interface IMonthPickerProps {
+    instanceId: string
     dateValue: Date | undefined
     minDateValue: Date | undefined
     maxDateValue: Date | undefined
@@ -50,8 +51,6 @@ const MonthPickerApp = (props:IMonthPickerProps): JSX.Element => {
       // Create a new date object that is adjusted by the timezone offset
       return new Date(props.dateValue.getTime() + timezoneOffsetMilliseconds);
     });
-
-    const providerIdPrefix = useId('month-picker-provider-');
 
     const inputRef = useRef<HTMLInputElement>(null);
     const positioningRef = useRef<PositioningImperativeRef>(null);
@@ -89,7 +88,7 @@ const MonthPickerApp = (props:IMonthPickerProps): JSX.Element => {
     const styles = useStyles();
     return (
         
-      <IdPrefixProvider value={providerIdPrefix}>
+      <IdPrefixProvider value={`month-picker-${props.instanceId}-`}>
         <FluentProvider theme={webLightTheme} >
             
             <Input

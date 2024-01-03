@@ -2,14 +2,18 @@ import {IInputs, IOutputs} from "./generated/ManifestTypes";
 import { createElement } from 'react';
 import { createRoot, Root } from 'react-dom/client';
 import MonthPickerApp, { IMonthPickerProps } from "./MonthPickerApp";
+import { v4 as uuidv4 } from 'uuid';
+
 
 export class FluentUIMonthPicker implements ComponentFramework.StandardControl<IInputs, IOutputs> {
 
     private _notifyOutputChanged: () => void;
     private _root: Root
     private _startDateValue:Date|undefined
-    private _endDateValue:Date|undefined    
+    private _endDateValue:Date|undefined   
+    private _isDesignMode:boolean = false 
     private _props: IMonthPickerProps = {
+        instanceId: uuidv4(),
         dateValue: undefined,
         minDateValue: undefined,
         maxDateValue: undefined,
@@ -42,6 +46,11 @@ export class FluentUIMonthPicker implements ComponentFramework.StandardControl<I
         this._root = createRoot(container!)
         this._notifyOutputChanged = notifyOutputChanged;
 
+        //https://butenko.pro/2023/01/08/pcf-design-time-vs-run-time/
+        if (location.ancestorOrigins?.[0] === "https://make.powerapps.com" ||
+            location.ancestorOrigins?.[0] === "https://make.preview.powerapps.com") {
+            this._isDesignMode = true;
+        }
         
     }
 
@@ -65,7 +74,16 @@ export class FluentUIMonthPicker implements ComponentFramework.StandardControl<I
         this._props.masked = isMasked;
         
         // Add code to update control view
-        this._props.dateValue = context.parameters.startDate.raw || undefined;
+        if(this._isDesignMode){
+            this._props.dateValue = new Date();
+            this._props.minDateValue = undefined;
+            this._props.maxDateValue = undefined;
+
+        }else{
+            this._props.dateValue = context.parameters.startDate.raw || undefined;
+            this._props.minDateValue = context.parameters.minDate.raw || undefined;
+            this._props.maxDateValue = context.parameters.maxDate.raw || undefined;
+        }
         //this._props.disabled = context.parameters.startDate.security?.editable ?? false // todo check other security concerns (FLS)
 
         switch (context.parameters.monthDisplayFormat?.raw) {
@@ -98,8 +116,7 @@ export class FluentUIMonthPicker implements ComponentFramework.StandardControl<I
 
         this._props.localeDisplayFormat = (context.userSettings as any).locale ?? "fr-CA";
 
-        this._props.minDateValue = context.parameters.minDate.raw || undefined;
-        this._props.maxDateValue = context.parameters.maxDate.raw || undefined;
+       
 
 
         this._root.render(createElement(MonthPickerApp, this._props)) 
