@@ -17,8 +17,8 @@ The control optionally outputs some information about the selected month (ex. mo
 | Month output   | (Optional) Selected Month in numeric form (1 - 12) | Whole.None | |
 | Year output |(Optional) Selected Year in numeric form (ex. 2024) |  Whole.None  | |
 | Days in Month | (Optional) Number of days in the month |  Whole.None   |
-| Month Display Format | Display format of the selected month (Numeric, Short, Long)|  Numeric  |
-| Year Display Format | Display format of the selected year (2 Digits, 4 Digits) |  4 Digits   |
+| Month Display Format | Display format of the selected month (Numeric, Short, Long)|  |Numeric  |
+| Year Display Format | Display format of the selected year (2 Digits, 4 Digits) |  |4 Digits   |
 
 
 ## Screenshots ##
