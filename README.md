@@ -1,13 +1,15 @@
 # FluentUI.MonthPicker.PCF ![GitHub all releases](https://img.shields.io/github/downloads/drivardxrm/FluentUI.MonthPicker.PCF/total?style=plastic)
 
-PowerApps Component framework (PCF) Control to render a [FluentUI v9](https://react.fluentui.dev/) Month picker over a Date column. The control optionally outputs some information about the selected month (ex. month number, number of days in month) 
+PowerApps Component framework (PCF) Control to render a [FluentUI v9](https://react.fluentui.dev/) Month picker over a Date column. 
+
+The control optionally outputs some information about the selected month (ex. month number, number of days in month) 
 
 [Download Here](https://github.com/drivardxrm/FluentUI.MonthPicker.PCF/releases/latest)
 
 
 # Parameters
 | Parameter         | Description                                                                                  | Type     |Default     |
-|-------------------|----------------------------------------------------------------------------------------------|----------   |
+|-------------------|----------------------------------------------------------------------------------------------|----------|------------|
 | Start Date  | (REQUIRED) main input column of the month picker, will be set at the first day of the PCF control selected month |DateAndTime.DateAndTime, DateAndTime.DateOnly | |
 | End Date  | (Optional) will be set at the last day of the PCF control selected month |    DateAndTime.DateAndTime, DateAndTime.DateOnly    | |
 | Min Date   |  (Optional) Min Date for month selection | Whole.None  | |
