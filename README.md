@@ -22,3 +22,6 @@ The control optionally outputs some information about the selected month (ex. mo
 
 
 ## Screenshots ##
+
+![image](https://github.com/drivardxrm/FluentUI.MonthPicker.PCF/assets/38399134/7b7b73b4-7f1f-43c5-8b4c-f871e86e7e64)
+
