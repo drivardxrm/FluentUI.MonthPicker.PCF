@@ -5,6 +5,6 @@
         "module": "es2015",
         "moduleResolution": "node",
         "jsx": "react",
-        "sourceMap": true
+        //"sourceMap": true
     }
 }

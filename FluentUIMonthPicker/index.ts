@@ -10,7 +10,10 @@ export class FluentUIMonthPicker implements ComponentFramework.StandardControl<I
     private _notifyOutputChanged: () => void;
     private _root: Root
     private _startDateValue:Date|undefined
-    private _endDateValue:Date|undefined   
+    private _endDateValue:Date|undefined
+    private _monthOutput: number|undefined
+    private _yearOutput: number|undefined
+    private _daysinMonth:number|undefined    
     private _isDesignMode:boolean = false 
     private _props: IMonthPickerProps = {
         instanceId: uuidv4(),
@@ -84,7 +87,6 @@ export class FluentUIMonthPicker implements ComponentFramework.StandardControl<I
             this._props.minDateValue = context.parameters.minDate.raw || undefined;
             this._props.maxDateValue = context.parameters.maxDate.raw || undefined;
         }
-        //this._props.disabled = context.parameters.startDate.security?.editable ?? false // todo check other security concerns (FLS)
 
         switch (context.parameters.monthDisplayFormat?.raw) {
             case "Numeric":
@@ -116,18 +118,29 @@ export class FluentUIMonthPicker implements ComponentFramework.StandardControl<I
 
         this._props.localeDisplayFormat = (context.userSettings as any).locale ?? "fr-CA";
 
-       
-
-
         this._root.render(createElement(MonthPickerApp, this._props)) 
     }
 
 
     //Callback method : React => PCF
-    private notifyChange(newStartDateValue: Date, newEndDateValue: Date) {
+    private notifyChange(newStartDateValue: Date|undefined, newEndDateValue: Date|undefined) {
         
         this._startDateValue = newStartDateValue;
         this._endDateValue = newEndDateValue;
+ 
+
+        //new Date(date.getFullYear(), date.getMonth() + 1, 0) creates a new date object with the year and month of the original date, but with the day set to 0, which JavaScript interprets as the last day of the previous month. Since we've set the month to one month in the future, this effectively gives us the last day of the original date's month.
+        //getDate() returns the day of the month (from 1 to 31) for the specified date, which in this case is the last day of the month, effectively giving us the number of days in the month.
+        if(newStartDateValue){
+            this._monthOutput = newStartDateValue.getMonth() + 1;
+            this._yearOutput = newStartDateValue.getFullYear();
+            this._daysinMonth = new Date(newStartDateValue.getFullYear(), newStartDateValue.getMonth() + 1, 0).getDate();
+        }else{
+            this._monthOutput = undefined;
+            this._yearOutput = undefined;
+            this._daysinMonth = undefined;
+        }
+
         this._notifyOutputChanged();
     }
 
@@ -140,7 +153,10 @@ export class FluentUIMonthPicker implements ComponentFramework.StandardControl<I
     {
         return {
             startDate: this._startDateValue,
-            endDate: this._endDateValue
+            endDate: this._endDateValue,
+            monthOutput: this._monthOutput,
+            yearOutput: this._yearOutput,
+            daysInMonth: this._daysinMonth
          };
     }
 

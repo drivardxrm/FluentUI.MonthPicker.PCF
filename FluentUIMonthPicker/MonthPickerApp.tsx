@@ -1,4 +1,4 @@
-import { FluentProvider, Input, Popover, PopoverSurface, PopoverTrigger, webLightTheme,  makeStyles, shorthands, PositioningImperativeRef, IdPrefixProvider } from '@fluentui/react-components'
+import { FluentProvider, Input, Popover, PopoverSurface, PopoverTrigger, webLightTheme,  makeStyles, shorthands, PositioningImperativeRef, IdPrefixProvider, InputProps } from '@fluentui/react-components'
 import { CalendarMonth20Regular  } from "@fluentui/react-icons";
 import { Calendar, DateRangeType  } from "@fluentui/react-calendar-compat";
 import * as React from 'react';
@@ -28,7 +28,7 @@ export interface IMonthPickerProps {
     masked: boolean
  
     //Callback function : => PCF
-    onMonthChange: (newStartDateValue: Date, newEndDateValue: Date) => void;
+    onMonthChange: (newStartDateValue: Date|undefined, newEndDateValue: Date|undefined) => void;
  }
 
 
@@ -81,9 +81,17 @@ const MonthPickerApp = (props:IMonthPickerProps): JSX.Element => {
      // If value is changed from outside the PCF
     useEffect(() => {
        if (selectedDate !== props.dateValue) {
-         setSelectedDate(selectedDate);
+         setSelectedDate(selectedDate)
       }
     }, [props.dateValue]); 
+
+    const onChange: InputProps["onChange"] = (ev, data) => {
+      // value was cleared by the user
+      if (data.value.length == 0) {
+        setSelectedDate(undefined)
+        props.onMonthChange(undefined, undefined);
+      }
+    };
    
     const styles = useStyles();
     return (
@@ -98,6 +106,7 @@ const MonthPickerApp = (props:IMonthPickerProps): JSX.Element => {
               //placeholder='---'
               disabled={props.disabled}
               value={selectedMonthStr}
+              onChange={onChange}
               contentAfter={
                 <Popover positioning={{ positioningRef }} >
                   <PopoverTrigger disableButtonEnhancement>
