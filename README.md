@@ -6,6 +6,9 @@ The control optionally outputs some information about the selected month (ex. mo
 
 [Download Here](https://github.com/drivardxrm/FluentUI.MonthPicker.PCF/releases/latest)
 
+![monthly-picker-gif](https://github.com/drivardxrm/FluentUI.MonthPicker.PCF/assets/38399134/5a308a56-3df9-496c-9299-e8f35f61573a)
+
+
 
 # Parameters
 | Parameter         | Description                                                                                  | Type     |Default     |
@@ -22,6 +25,9 @@ The control optionally outputs some information about the selected month (ex. mo
 
 
 ## Screenshots ##
+
+![image](https://github.com/drivardxrm/FluentUI.MonthPicker.PCF/assets/38399134/5debe9f9-89d0-4908-aef0-2b28634d5674)
+
 
 ![image](https://github.com/drivardxrm/FluentUI.MonthPicker.PCF/assets/38399134/7b7b73b4-7f1f-43c5-8b4c-f871e86e7e64)
 
