@@ -1,8 +1,8 @@
-import { FluentProvider, Input, Popover, PopoverSurface, PopoverTrigger, webLightTheme,  makeStyles, shorthands, PositioningImperativeRef, IdPrefixProvider, InputProps } from '@fluentui/react-components'
+import { FluentProvider, Input, Popover, PopoverSurface, PopoverTrigger, webLightTheme,  makeStyles, shorthands, PositioningImperativeRef, IdPrefixProvider, InputProps, PopoverProps } from '@fluentui/react-components'
 import { CalendarMonth20Regular  } from "@fluentui/react-icons";
-import { Calendar, DateRangeType, ICalendar  } from "@fluentui/react-calendar-compat";
+import { Calendar, DateRangeType } from "@fluentui/react-calendar-compat";
 import * as React from 'react';
-import { RefObject, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 export const useStyles = makeStyles({
   icon: {  
@@ -42,7 +42,11 @@ const MonthPickerApp = (props:IMonthPickerProps): JSX.Element => {
     // Convert the timezone offset from minutes to milliseconds
     const timezoneOffsetMilliseconds = timezoneOffsetMinutes * 60 * 1000;
 
-    let calendarRef: RefObject<ICalendar> | undefined = undefined
+    const [open, setOpen] = useState(false);
+    const handleOpenChange: PopoverProps["onOpenChange"] = (e, data) =>{
+      setOpen(data.open || false);
+    } 
+
   
     const [selectedDate, setSelectedDate] = useState<Date|undefined>(() =>{
       
@@ -62,7 +66,7 @@ const MonthPickerApp = (props:IMonthPickerProps): JSX.Element => {
       const lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
       setSelectedDate(firstDayOfMonth);
       props.onMonthChange(firstDayOfMonth, lastDayOfMonth);
-      calendarRef?.current?.focus();
+      setOpen(false);
     }
 
     const selectedMonthStr = useMemo(() => 
@@ -101,7 +105,7 @@ const MonthPickerApp = (props:IMonthPickerProps): JSX.Element => {
         
       <IdPrefixProvider value={`month-picker-${props.instanceId}-`}>
         <FluentProvider theme={webLightTheme} >
-          <Popover positioning={{ positioningRef }} >
+          <Popover positioning={{ positioningRef }} open={open} onOpenChange={handleOpenChange}>
             <PopoverTrigger disableButtonEnhancement>
               <Input
                   className={styles.root}
@@ -121,7 +125,6 @@ const MonthPickerApp = (props:IMonthPickerProps): JSX.Element => {
 
             <PopoverSurface tabIndex={-1}>
               <Calendar
-                componentRef={calendarRef}
                 dateRangeType={DateRangeType.Month}
                 showGoToToday={false}
                 highlightSelectedMonth
