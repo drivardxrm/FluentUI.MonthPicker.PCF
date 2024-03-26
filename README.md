@@ -6,6 +6,9 @@ The control optionally outputs some information about the selected month (ex. mo
 
 [Download Here](https://github.com/drivardxrm/FluentUI.MonthPicker.PCF/releases/latest)
 
+![monthly-picker-gif](https://github.com/drivardxrm/FluentUI.MonthPicker.PCF/assets/38399134/5a308a56-3df9-496c-9299-e8f35f61573a)
+
+
 
 # Parameters
 | Parameter         | Description                                                                                  | Type     |Default     |
@@ -17,8 +20,14 @@ The control optionally outputs some information about the selected month (ex. mo
 | Month output   | (Optional) Selected Month in numeric form (1 - 12) | Whole.None | |
 | Year output |(Optional) Selected Year in numeric form (ex. 2024) |  Whole.None  | |
 | Days in Month | (Optional) Number of days in the month |  Whole.None   |
-| Month Display Format | Display format of the selected month (Numeric, Short, Long)|  Numeric  |
-| Year Display Format | Display format of the selected year (2 Digits, 4 Digits) |  4 Digits   |
+| Month Display Format | Display format of the selected month (Numeric, Short, Long)|  |Numeric  |
+| Year Display Format | Display format of the selected year (2 Digits, 4 Digits) |  |4 Digits   |
 
 
 ## Screenshots ##
+
+![image](https://github.com/drivardxrm/FluentUI.MonthPicker.PCF/assets/38399134/5debe9f9-89d0-4908-aef0-2b28634d5674)
+
+
+![image](https://github.com/drivardxrm/FluentUI.MonthPicker.PCF/assets/38399134/7b7b73b4-7f1f-43c5-8b4c-f871e86e7e64)
+
