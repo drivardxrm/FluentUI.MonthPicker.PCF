@@ -89,8 +89,8 @@ const MonthPickerApp = (props:IMonthPickerProps): JSX.Element => {
     useEffect(() => {
        if (selectedDate !== props.dateValue) {
          setSelectedDate(selectedDate)
-      }
-    }, [props.dateValue]); 
+       }
+    }, [props.dateValue, selectedDate]); 
 
     const onChange: InputProps["onChange"] = (ev, data) => {
       // value was cleared by the user
