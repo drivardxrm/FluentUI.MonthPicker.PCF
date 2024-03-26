@@ -1,8 +1,8 @@
 import { FluentProvider, Input, Popover, PopoverSurface, PopoverTrigger, webLightTheme,  makeStyles, shorthands, PositioningImperativeRef, IdPrefixProvider, InputProps } from '@fluentui/react-components'
 import { CalendarMonth20Regular  } from "@fluentui/react-icons";
-import { Calendar, DateRangeType  } from "@fluentui/react-calendar-compat";
+import { Calendar, DateRangeType, ICalendar  } from "@fluentui/react-calendar-compat";
 import * as React from 'react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { RefObject, useEffect, useMemo, useRef, useState } from 'react';
 
 export const useStyles = makeStyles({
   icon: {  
@@ -41,6 +41,8 @@ const MonthPickerApp = (props:IMonthPickerProps): JSX.Element => {
     const timezoneOffsetMinutes = currentDate.getTimezoneOffset();
     // Convert the timezone offset from minutes to milliseconds
     const timezoneOffsetMilliseconds = timezoneOffsetMinutes * 60 * 1000;
+
+    let calendarRef: RefObject<ICalendar> | undefined = undefined
   
     const [selectedDate, setSelectedDate] = useState<Date|undefined>(() =>{
       
@@ -60,6 +62,7 @@ const MonthPickerApp = (props:IMonthPickerProps): JSX.Element => {
       const lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
       setSelectedDate(firstDayOfMonth);
       props.onMonthChange(firstDayOfMonth, lastDayOfMonth);
+      calendarRef?.current?.focus();
     }
 
     const selectedMonthStr = useMemo(() => 
@@ -98,40 +101,40 @@ const MonthPickerApp = (props:IMonthPickerProps): JSX.Element => {
         
       <IdPrefixProvider value={`month-picker-${props.instanceId}-`}>
         <FluentProvider theme={webLightTheme} >
-            
-            <Input
-              className={styles.root}
-              ref={inputRef}
-              appearance='filled-darker'
-              //placeholder='---'
-              disabled={props.disabled}
-              value={selectedMonthStr}
-              onChange={onChange}
-              contentAfter={
-                <Popover positioning={{ positioningRef }} >
-                  <PopoverTrigger disableButtonEnhancement>
-                    <CalendarMonth20Regular className={styles.icon} />
-                  </PopoverTrigger>
+          <Popover positioning={{ positioningRef }} >
+            <PopoverTrigger disableButtonEnhancement>
+              <Input
+                  className={styles.root}
+                  ref={inputRef}
+                  appearance='filled-darker'
+                  //placeholder='---'
+                  disabled={props.disabled}
+                  value={selectedMonthStr}
+                  onChange={onChange}
+                  contentAfter={
+                    <PopoverTrigger disableButtonEnhancement>
+                      <CalendarMonth20Regular className={styles.icon} />
+                    </PopoverTrigger>
+                  }
+              />   
+            </PopoverTrigger>
 
-                  <PopoverSurface tabIndex={-1}>
-                    <Calendar
-                      dateRangeType={DateRangeType.Month}
-                      showGoToToday={false}
-                      highlightSelectedMonth
-                      isDayPickerVisible={false}
-                      onSelectDate={onSelectMonth}
-                      minDate={props.minDateValue ? new Date(props.minDateValue.getTime() + timezoneOffsetMilliseconds) : undefined}
-                      maxDate={props.maxDateValue ? new Date(props.maxDateValue.getTime() + timezoneOffsetMilliseconds) : undefined}
-                      value={selectedDate}
-                    />
-                  </PopoverSurface>
-                </Popover>
-              }
-            />
+            <PopoverSurface tabIndex={-1}>
+              <Calendar
+                componentRef={calendarRef}
+                dateRangeType={DateRangeType.Month}
+                showGoToToday={false}
+                highlightSelectedMonth
+                isDayPickerVisible={false}
+                onSelectDate={onSelectMonth}
+                minDate={props.minDateValue ? new Date(props.minDateValue.getTime() + timezoneOffsetMilliseconds) : undefined}
+                maxDate={props.maxDateValue ? new Date(props.maxDateValue.getTime() + timezoneOffsetMilliseconds) : undefined}
+                value={selectedDate}
+              />
+            </PopoverSurface>
+          </Popover>  
         </FluentProvider>
       </IdPrefixProvider >  
-        
-        
     )
 }
 
