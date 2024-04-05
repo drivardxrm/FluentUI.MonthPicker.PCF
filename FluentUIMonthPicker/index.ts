@@ -15,11 +15,13 @@ export class FluentUIMonthPicker implements ComponentFramework.StandardControl<I
     private _yearOutput: number|undefined
     private _daysinMonth:number|undefined    
     private _isDesignMode:boolean = false 
+    
     private _props: IMonthPickerProps = {
         instanceId: uuidv4(),
         dateValue: undefined,
         minDateValue: undefined,
         maxDateValue: undefined,
+        isDarkMode: false,
         disabled: false,
         masked: false,
         monthDisplayFormat: "2-digit",
@@ -48,6 +50,9 @@ export class FluentUIMonthPicker implements ComponentFramework.StandardControl<I
     {
         this._root = createRoot(container!)
         this._notifyOutputChanged = notifyOutputChanged;
+
+        this._props.isDarkMode = context.fluentDesignLanguage?.isDarkTheme ?? false;
+
 
         //https://butenko.pro/2023/01/08/pcf-design-time-vs-run-time/
         if (location.ancestorOrigins?.[0] === "https://make.powerapps.com" ||

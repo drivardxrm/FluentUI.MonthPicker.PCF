@@ -1,4 +1,4 @@
-import { FluentProvider, Input, Popover, PopoverSurface, PopoverTrigger, webLightTheme,  makeStyles, shorthands, PositioningImperativeRef, IdPrefixProvider, InputProps, PopoverProps } from '@fluentui/react-components'
+import { FluentProvider, Input, Popover, PopoverSurface, PopoverTrigger, webLightTheme,  makeStyles, shorthands, PositioningImperativeRef, IdPrefixProvider, InputProps, PopoverProps, webDarkTheme } from '@fluentui/react-components'
 import { CalendarMonth20Regular  } from "@fluentui/react-icons";
 import { Calendar, DateRangeType } from "@fluentui/react-calendar-compat";
 import * as React from 'react';
@@ -22,6 +22,7 @@ export interface IMonthPickerProps {
     monthDisplayFormat: Intl.DateTimeFormatOptions["month"]
     yearDisplayFormat: Intl.DateTimeFormatOptions["year"]
     localeDisplayFormat: string
+    isDarkMode: boolean
     
  
     disabled: boolean
@@ -104,7 +105,7 @@ const MonthPickerApp = (props:IMonthPickerProps): JSX.Element => {
     return (
         
       <IdPrefixProvider value={`month-picker-${props.instanceId}-`}>
-        <FluentProvider theme={webLightTheme} >
+        <FluentProvider theme={props.isDarkMode ? webDarkTheme : webLightTheme} >
           <Popover positioning={{ positioningRef }} open={open} onOpenChange={handleOpenChange}>
             <PopoverTrigger disableButtonEnhancement>
               <Input

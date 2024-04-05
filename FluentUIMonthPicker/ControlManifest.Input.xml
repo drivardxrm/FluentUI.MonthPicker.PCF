@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <manifest>
-  <control namespace="DR" constructor="FluentUIMonthPicker" version="0.0.14" display-name-key="FluentUIMonthPicker" description-key="FluentUIMonthPicker description" control-type="standard" >
+  <control namespace="DR" constructor="FluentUIMonthPicker" version="0.0.15" display-name-key="FluentUIMonthPicker" description-key="FluentUIMonthPicker description" control-type="standard" >
     
     <external-service-usage enabled="false">
     </external-service-usage>
