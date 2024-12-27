@@ -1,8 +1,8 @@
 import { FluentProvider, Input, Popover, PopoverSurface, PopoverTrigger, webLightTheme,  makeStyles, shorthands, PositioningImperativeRef, IdPrefixProvider, InputProps, PopoverProps, webDarkTheme } from '@fluentui/react-components'
-import { CalendarMonth20Regular  } from "@fluentui/react-icons";
-import { Calendar, DateRangeType } from "@fluentui/react-calendar-compat";
-import * as React from 'react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { CalendarMonth20Regular  } from "@fluentui/react-icons"
+import { Calendar, DateRangeType } from "@fluentui/react-calendar-compat"
+import * as React from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 export const useStyles = makeStyles({
   icon: {  
@@ -29,7 +29,7 @@ export interface IMonthPickerProps {
     masked: boolean
  
     //Callback function : => PCF
-    onMonthChange: (newStartDateValue: Date|undefined, newEndDateValue: Date|undefined) => void;
+    onMonthChange: (newStartDateValue: Date|undefined, newEndDateValue: Date|undefined) => void
  }
 
 
@@ -37,37 +37,37 @@ const MonthPickerApp = (props:IMonthPickerProps): JSX.Element => {
 
     
     // Get the current date
-    const currentDate = new Date();
+    const currentDate = new Date()
     // Get the timezone offset in minutes
-    const timezoneOffsetMinutes = currentDate.getTimezoneOffset();
+    const timezoneOffsetMinutes = currentDate.getTimezoneOffset()
     // Convert the timezone offset from minutes to milliseconds
-    const timezoneOffsetMilliseconds = timezoneOffsetMinutes * 60 * 1000;
+    const timezoneOffsetMilliseconds = timezoneOffsetMinutes * 60 * 1000
 
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(false)
     const handleOpenChange: PopoverProps["onOpenChange"] = (e, data) =>{
-      setOpen(data.open || false);
+      setOpen(data.open || false)
     } 
 
   
     const [selectedDate, setSelectedDate] = useState<Date|undefined>(() =>{
       
       if (props.dateValue === undefined) {
-        return props.dateValue;
+        return props.dateValue
       }
       
       // Create a new date object that is adjusted by the timezone offset
-      return new Date(props.dateValue.getTime() + timezoneOffsetMilliseconds);
+      return new Date(props.dateValue.getTime() + timezoneOffsetMilliseconds)
     });
 
     const inputRef = useRef<HTMLInputElement>(null);
     const positioningRef = useRef<PositioningImperativeRef>(null);
 
     const onSelectMonth = (date: Date, selectedDateRangeArray?: Date[] | undefined): void => {
-      const firstDayOfMonth= new Date(date.getFullYear(), date.getMonth(), 1);  
-      const lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-      setSelectedDate(firstDayOfMonth);
-      props.onMonthChange(firstDayOfMonth, lastDayOfMonth);
-      setOpen(false);
+      const firstDayOfMonth= new Date(date.getFullYear(), date.getMonth(), 1)
+      const lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0)
+      setSelectedDate(firstDayOfMonth)
+      props.onMonthChange(firstDayOfMonth, lastDayOfMonth)
+      setOpen(false)
     }
 
     const selectedMonthStr = useMemo(() => 
@@ -81,23 +81,32 @@ const MonthPickerApp = (props:IMonthPickerProps): JSX.Element => {
       if (inputRef.current) {
         positioningRef.current?.setTarget(inputRef.current)
       }
-    }, [inputRef, positioningRef]);
+    }, [inputRef, positioningRef])
 
 
   
 
      // If value is changed from outside the PCF
     useEffect(() => {
-       if (selectedDate !== props.dateValue) {
-         setSelectedDate(selectedDate)
+       var newDate = props.dateValue == undefined ? undefined : new Date(props.dateValue.getTime() + timezoneOffsetMilliseconds);
+       if (selectedDate !== newDate) {
+         setSelectedDate(newDate)
+         // trigger onchange event
+          if (newDate) {
+            const firstDayOfMonth= new Date(newDate.getFullYear(), newDate.getMonth(), 1); 
+            const lastDayOfMonth = new Date(newDate.getFullYear(), newDate.getMonth() + 1, 0)
+            props.onMonthChange(firstDayOfMonth, lastDayOfMonth)
+          } else {
+            props.onMonthChange(undefined, undefined)
+          }
        }
-    }, [props.dateValue, selectedDate]); 
+    }, [props.dateValue])
 
     const onChange: InputProps["onChange"] = (ev, data) => {
       // value was cleared by the user
       if (data.value.length == 0) {
         setSelectedDate(undefined)
-        props.onMonthChange(undefined, undefined);
+        props.onMonthChange(undefined, undefined)
       }
     };
    
