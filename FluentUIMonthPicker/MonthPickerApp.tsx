@@ -35,13 +35,11 @@ export interface IMonthPickerProps {
 
 const MonthPickerApp = (props:IMonthPickerProps): JSX.Element => {
 
-    
-    // Get the current date
-    const currentDate = new Date()
-    // Get the timezone offset in minutes
-    const timezoneOffsetMinutes = currentDate.getTimezoneOffset()
-    // Convert the timezone offset from minutes to milliseconds
-    const timezoneOffsetMilliseconds = timezoneOffsetMinutes * 60 * 1000
+
+    // Gets offset for date passed in
+    const getTimezoneOffsetMilliseconds = (date: Date | undefined) => {
+      return date ? date.getTimezoneOffset() * 60 * 1000 : 0;
+    }
 
     const [open, setOpen] = useState(false)
     const handleOpenChange: PopoverProps["onOpenChange"] = (e, data) =>{
@@ -56,7 +54,7 @@ const MonthPickerApp = (props:IMonthPickerProps): JSX.Element => {
       }
       
       // Create a new date object that is adjusted by the timezone offset
-      return new Date(props.dateValue.getTime() + timezoneOffsetMilliseconds)
+      return new Date(props.dateValue.getTime() + getTimezoneOffsetMilliseconds(props.dateValue))
     });
 
     const inputRef = useRef<HTMLInputElement>(null);
@@ -88,7 +86,7 @@ const MonthPickerApp = (props:IMonthPickerProps): JSX.Element => {
 
      // If value is changed from outside the PCF
     useEffect(() => {
-       var newDate = props.dateValue == undefined ? undefined : new Date(props.dateValue.getTime() + timezoneOffsetMilliseconds);
+       var newDate = props.dateValue == undefined ? undefined : new Date(props.dateValue.getTime() + getTimezoneOffsetMilliseconds(props.dateValue));
        if (selectedDate !== newDate) {
          setSelectedDate(newDate)
          // trigger onchange event
@@ -140,8 +138,8 @@ const MonthPickerApp = (props:IMonthPickerProps): JSX.Element => {
                 highlightSelectedMonth
                 isDayPickerVisible={false}
                 onSelectDate={onSelectMonth}
-                minDate={props.minDateValue ? new Date(props.minDateValue.getTime() + timezoneOffsetMilliseconds) : undefined}
-                maxDate={props.maxDateValue ? new Date(props.maxDateValue.getTime() + timezoneOffsetMilliseconds) : undefined}
+                minDate={props.minDateValue ? new Date(props.minDateValue.getTime() + getTimezoneOffsetMilliseconds(props.dateValue)) : undefined}
+                maxDate={props.maxDateValue ? new Date(props.maxDateValue.getTime() + getTimezoneOffsetMilliseconds(props.dateValue)) : undefined}
                 value={selectedDate}
               />
             </PopoverSurface>
