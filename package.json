@@ -13,11 +13,11 @@
     "refreshTypes": "pcf-scripts refreshTypes"
   },
   "dependencies": {
-    "@fluentui/react-components": "9.56.8",
-    "@fluentui/react-datepicker-compat": "^0.4.59",
+    "@fluentui/react-components": "9.66.5",
+    "@fluentui/react-datepicker-compat": "^0.6.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "uuid": "^11.0.3"
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@microsoft/eslint-plugin-power-apps": "^0.2.6",

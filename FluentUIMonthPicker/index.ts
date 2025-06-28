@@ -1,19 +1,20 @@
 import {IInputs, IOutputs} from "./generated/ManifestTypes";
 import { createElement } from 'react';
-import { createRoot, Root } from 'react-dom/client';
+import { createRoot, Root } from 'react-dom/client'
 import MonthPickerApp, { IMonthPickerProps } from "./MonthPickerApp";
 import { v4 as uuidv4 } from 'uuid';
+import { convertToLocalDate, ISelectedMonthInfo } from "./dateUtils";
 
+
+
+// important for date handling
+// https://develop1.net/public/post/2020/05/11/pcf-datetimes-the-saga-continues
 
 export class FluentUIMonthPicker implements ComponentFramework.StandardControl<IInputs, IOutputs> {
 
     private _notifyOutputChanged: () => void;
     private _root: Root
-    private _startDateValue:Date|undefined
-    private _endDateValue:Date|undefined
-    private _monthOutput: number|undefined
-    private _yearOutput: number|undefined
-    private _daysinMonth:number|undefined    
+    private _selectedMonthInfo: ISelectedMonthInfo | undefined;
     private _isDesignMode:boolean = false 
     
     private _props: IMonthPickerProps = {
@@ -54,9 +55,8 @@ export class FluentUIMonthPicker implements ComponentFramework.StandardControl<I
         this._props.isDarkMode = context.fluentDesignLanguage?.isDarkTheme ?? false;
 
 
-        //https://butenko.pro/2023/01/08/pcf-design-time-vs-run-time/
-        if (location.ancestorOrigins?.[0] === "https://make.powerapps.com" ||
-            location.ancestorOrigins?.[0] === "https://make.preview.powerapps.com") {
+        //https://itmustbecode.com/pcf-controls-tips-tricks-how-to-detect-authoring-mode/
+        if ((context.mode as any).isAuthoringMode === true) {
             this._isDesignMode = true;
         }
         
@@ -88,10 +88,12 @@ export class FluentUIMonthPicker implements ComponentFramework.StandardControl<I
             this._props.maxDateValue = undefined;
 
         }else{
-            this._props.dateValue = context.parameters.startDate.raw || undefined;
-            this._props.minDateValue = context.parameters.minDate.raw || undefined;
-            this._props.maxDateValue = context.parameters.maxDate.raw || undefined;
+            this._props.dateValue =  convertToLocalDate(context.parameters.startDate, context.userSettings)  //context.parameters.startDate.raw || undefined;
+            this._props.minDateValue = convertToLocalDate(context.parameters.minDate, context.userSettings)//context.parameters.minDate.raw || undefined;
+            this._props.maxDateValue = convertToLocalDate(context.parameters.maxDate, context.userSettings) //context.parameters.maxDate.raw || undefined;
         }
+
+        context.userSettings.dateFormattingInfo
 
         switch (context.parameters.monthDisplayFormat?.raw) {
             case "Numeric":
@@ -128,24 +130,10 @@ export class FluentUIMonthPicker implements ComponentFramework.StandardControl<I
 
 
     //Callback method : React => PCF
-    private notifyChange(newStartDateValue: Date|undefined, newEndDateValue: Date|undefined) {
+    private notifyChange(selectedMonthInfo: ISelectedMonthInfo) {
         
-        this._startDateValue = newStartDateValue;
-        this._endDateValue = newEndDateValue;
- 
-
-        //new Date(date.getFullYear(), date.getMonth() + 1, 0) creates a new date object with the year and month of the original date, but with the day set to 0, which JavaScript interprets as the last day of the previous month. Since we've set the month to one month in the future, this effectively gives us the last day of the original date's month.
-        //getDate() returns the day of the month (from 1 to 31) for the specified date, which in this case is the last day of the month, effectively giving us the number of days in the month.
-        if(newStartDateValue){
-            this._monthOutput = newStartDateValue.getMonth() + 1;
-            this._yearOutput = newStartDateValue.getFullYear();
-            this._daysinMonth = new Date(newStartDateValue.getFullYear(), newStartDateValue.getMonth() + 1, 0).getDate();
-        }else{
-            this._monthOutput = undefined;
-            this._yearOutput = undefined;
-            this._daysinMonth = undefined;
-        }
-
+        this._selectedMonthInfo = selectedMonthInfo;
+        
         this._notifyOutputChanged();
     }
 
@@ -157,11 +145,11 @@ export class FluentUIMonthPicker implements ComponentFramework.StandardControl<I
     public getOutputs(): IOutputs
     {
         return {
-            startDate: this._startDateValue,
-            endDate: this._endDateValue,
-            monthOutput: this._monthOutput,
-            yearOutput: this._yearOutput,
-            daysInMonth: this._daysinMonth
+            startDate: this._selectedMonthInfo?.startDate,
+            endDate: this._selectedMonthInfo?.endDate,
+            monthOutput: this._selectedMonthInfo?.monthOutput,
+            yearOutput: this._selectedMonthInfo?.yearOutput,
+            daysInMonth: this._selectedMonthInfo?.daysInMonth
          };
     }
 
@@ -175,3 +163,5 @@ export class FluentUIMonthPicker implements ComponentFramework.StandardControl<I
         this._root.unmount();
     }
 }
+
+
