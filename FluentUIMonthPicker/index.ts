@@ -3,7 +3,7 @@ import { createElement } from 'react';
 import { createRoot, Root } from 'react-dom/client'
 import MonthPickerApp, { IMonthPickerProps } from "./MonthPickerApp";
 import { v4 as uuidv4 } from 'uuid';
-import { convertToLocalDate, ISelectedMonthInfo } from "./dateUtils";
+import { convertToLocalDate, datesAreEqual, ISelectedMonthInfo } from "./dateUtils";
 
 
 
@@ -16,6 +16,8 @@ export class FluentUIMonthPicker implements ComponentFramework.StandardControl<I
     private _root: Root
     private _selectedMonthInfo: ISelectedMonthInfo | undefined;
     private _isDesignMode:boolean = false 
+    private _renderedDate: Date | undefined;
+    private _firstRender: boolean = true;
     
     private _props: IMonthPickerProps = {
         instanceId: uuidv4(),
@@ -82,6 +84,7 @@ export class FluentUIMonthPicker implements ComponentFramework.StandardControl<I
         this._props.masked = isMasked;
         
         // Add code to update control view
+        //console.log("FluentUIMonthPicker updateView", context.parameters.startDate.raw, context.userSettings.dateFormattingInfo);
         if(this._isDesignMode){
             this._props.dateValue = new Date();
             this._props.minDateValue = undefined;
@@ -93,39 +96,48 @@ export class FluentUIMonthPicker implements ComponentFramework.StandardControl<I
             this._props.maxDateValue = convertToLocalDate(context.parameters.maxDate, context.userSettings) //context.parameters.maxDate.raw || undefined;
         }
 
-        context.userSettings.dateFormattingInfo
+        // Prevent re-rendering if the dateValue has not changed
+        if(this._firstRender || !datesAreEqual(this._props.dateValue, this._renderedDate)) {
+        
+            context.userSettings.dateFormattingInfo
 
-        switch (context.parameters.monthDisplayFormat?.raw) {
-            case "Numeric":
-                this._props.monthDisplayFormat = "numeric";
-                break;
-            case "Short":
-                this._props.monthDisplayFormat = "short";
-                break;
-            case "Long":
-                this._props.monthDisplayFormat = "long";
-                break;
-            default:
-                this._props.monthDisplayFormat = "numeric";
-                break;
+            switch (context.parameters.monthDisplayFormat?.raw) {
+                case "Numeric":
+                    this._props.monthDisplayFormat = "numeric";
+                    break;
+                case "Short":
+                    this._props.monthDisplayFormat = "short";
+                    break;
+                case "Long":
+                    this._props.monthDisplayFormat = "long";
+                    break;
+                default:
+                    this._props.monthDisplayFormat = "numeric";
+                    break;
+            }
+
+            switch (context.parameters.yearDisplayFormat?.raw) {
+                case "4digits":
+                    this._props.yearDisplayFormat = "numeric";
+                    break;
+                case "2digits":
+                    this._props.yearDisplayFormat = "2-digit";
+                    break;
+                
+                default:
+                    this._props.yearDisplayFormat = "numeric";
+                    break;
+            }
+
+            this._props.localeDisplayFormat = (context.userSettings as any).locale ?? "fr-CA";
+
+            this._root.render(createElement(MonthPickerApp, this._props)) 
+            this._renderedDate = this._props.dateValue;
+            this._firstRender = false;
+            //console.log("FluentUIMonthPicker updateView rendering ", this._props.dateValue);
         }
 
-        switch (context.parameters.yearDisplayFormat?.raw) {
-            case "4digits":
-                this._props.yearDisplayFormat = "numeric";
-                break;
-            case "2digits":
-                this._props.yearDisplayFormat = "2-digit";
-                break;
-            
-            default:
-                this._props.yearDisplayFormat = "numeric";
-                break;
-        }
-
-        this._props.localeDisplayFormat = (context.userSettings as any).locale ?? "fr-CA";
-
-        this._root.render(createElement(MonthPickerApp, this._props)) 
+        
     }
 
 
@@ -144,6 +156,7 @@ export class FluentUIMonthPicker implements ComponentFramework.StandardControl<I
      */
     public getOutputs(): IOutputs
     {
+        //console.log("FluentUIMonthPicker getOutputs", this._selectedMonthInfo?.startDate);
         return {
             startDate: this._selectedMonthInfo?.startDate,
             endDate: this._selectedMonthInfo?.endDate,

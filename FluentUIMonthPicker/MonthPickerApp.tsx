@@ -47,6 +47,8 @@ const MonthPickerApp = (props:IMonthPickerProps): JSX.Element => {
 
     
     const [selectedDate, setSelectedDate] = useState<Date|undefined>(props.dateValue)
+    const prevDateValueRef = useRef<Date | undefined>();
+
       
 
     const inputRef = useRef<HTMLInputElement>(null);
@@ -80,14 +82,17 @@ const MonthPickerApp = (props:IMonthPickerProps): JSX.Element => {
 
      // If value is changed from outside the PCF
     useEffect(() => {
-      
-      if (!datesAreEqual(selectedDate,props.dateValue)) {
+
+      if (!datesAreEqual(prevDateValueRef.current, props.dateValue)) {
         const selectedMonthInfo = getSelectedMonthInfo(props.dateValue); 
         setSelectedDate(selectedMonthInfo.startDate)
         props.onMonthChange(selectedMonthInfo)
+
+        prevDateValueRef.current = props.dateValue;
          
       }
-    }, [props.dateValue])
+    }); // No dependency array - runs every render but with custom logic
+
 
     const onChange: InputProps["onChange"] = (ev, data) => {
       // value was cleared by the user

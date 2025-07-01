@@ -1,28 +1,56 @@
 export const convertToLocalDate = (dateProperty: ComponentFramework.PropertyTypes.DateTimeProperty,  userSettings : ComponentFramework.UserSettings) : Date | undefined => {
-    if(dateProperty.raw === undefined || dateProperty.raw === null) {
+    const dateValue = ensureDate(dateProperty.raw);
+    //console.log("convertToLocalDate", dateValue, dateProperty.attributes?.Behavior);
+    if(dateValue === undefined || dateValue === null) {
         return undefined;
     }
-    else if (dateProperty.attributes?.Behavior == 1) { //UserLocal
-        const offsetMinutes = userSettings.getTimeZoneOffsetMinutes(dateProperty.raw);
-        const localDate = addMinutes(dateProperty.raw, offsetMinutes);
+    
+    else if (dateProperty.attributes?.Behavior == 1 || typeof dateProperty.raw === 'string') { //UserLocal or when the date object is passed as a string
+        const offsetMinutes = userSettings.getTimeZoneOffsetMinutes(dateValue);
+        const localDate = addMinutes(dateValue, offsetMinutes);
         return getUtcDate(localDate);
-    } else {
-        return getUtcDate(dateProperty.raw);
+    }
+    else if (dateProperty.attributes?.Behavior == 0) { //to make it work in tets harness
+        return dateValue
+    }
+    else {
+        return getUtcDate(dateValue);
     }
 }
 
 
+export const ensureDate = (date: Date | undefined | null): Date | undefined => {
+    if (date === undefined || date === null) {
+        return undefined;
+    }
+
+    // Convert string to Date object if needed
+    // Happens when min and max date are set as static value, the date passed is a string 
+    if (typeof date === 'string') {
+        return new Date(date);
+    } else if (date instanceof Date) {
+        return date;
+    } else {
+        return undefined;
+    }
+}
 
 export const getUtcDate = (date: Date | undefined | null) => 
-     date === undefined || date === null? 
-        undefined :  
-        new  Date(
-            date.getUTCFullYear(),
-            date.getUTCMonth(),
-            date.getUTCDate(),
-            date.getUTCHours(),
-            date.getUTCMinutes()
+     {
+        let dateObj = ensureDate(date);
+        if (dateObj === undefined || dateObj === null) {
+            return undefined;
+        }
+                
+        
+        return new Date(
+            dateObj.getUTCFullYear(),
+            dateObj.getUTCMonth(),
+            dateObj.getUTCDate(),
+            dateObj.getUTCHours(),
+            dateObj.getUTCMinutes()
         );
+    };
 
 export const addMinutes = (date: Date | undefined, minutes: number): Date | undefined => 
     date === undefined ? 
@@ -36,9 +64,7 @@ export const datesAreEqual = (date1: Date | null | undefined, date2: Date | null
   
     return date1.getFullYear() === date2.getFullYear() &&
            date1.getMonth() === date2.getMonth() &&
-           date1.getDate() === date2.getDate() &&
-           date1.getHours() === date2.getHours() &&
-           date1.getMinutes() === date2.getMinutes();
+           date1.getDate() === date2.getDate()
 };
 
 
